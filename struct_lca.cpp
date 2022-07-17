@@ -17,6 +17,7 @@ struct LCA
         for(int i = 1; i <= 19; i++) BIN[i] = BIN[i - 1] * 2;
     }
     
+    
     void assignHeight(int u)
     {
         for(auto i : adj[u])
@@ -28,11 +29,13 @@ struct LCA
         }
     }
     
+    
     void createBinJumping()
     {
         for(int j = 1; j <= LOG; j++)
             for(int i = 1; i <= N; i++) par[i][j] = par[par[i][j - 1]][j - 1];
     }
+    
     
     int solve(int u, int v)
     {
