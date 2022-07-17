@@ -17,8 +17,6 @@ struct LCA
         for(int i = 1; i <= 19; i++) BIN[i] = BIN[i - 1] * 2;
     }
     
-    
-    
     void assignHeight(int u)
     {
         for(auto i : adj[u])
