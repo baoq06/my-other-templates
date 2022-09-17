@@ -31,9 +31,10 @@ struct lazyST
     
     void pushDown(int id, int l, int r)
     {
-        st[id * 2] += lazy[id];
+        int mid = (l + r) >> 1;
+        st[id * 2] += (lazy[id] * (mid - l + 1));
+        st[id * 2 + 1] += (lazy[id] * (r - mid));
         lazy[id * 2] += lazy[id];
-        st[id * 2 + 1] += lazy[id];
         lazy[id * 2 + 1] += lazy[id];
         lazy[id] = 0;
     }
@@ -43,7 +44,7 @@ struct lazyST
         if(l > y || r < x || l > r || x > y) return;
         if(l >= x && r <= y)
         {
-            st[id] += c;
+            st[id] += (c * (r - l + 1));
             lazy[id] += c;
             return;
         }
