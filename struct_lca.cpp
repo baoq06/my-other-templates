@@ -1,57 +1,50 @@
-struct LCA 
+struct LCA
 {
-    int LOG = 19;
-    vector<vector<int>> par, adj;
-    vector<int> high;
-    int N;
-    vector<int> BIN;
-    
-    
-    LCA(int _N, vector<vector<int>> temp)
+    vector<vector<int>> parent;
+    vector<int> depth;
+    int n;
+
+    LCA(const int& _n = 0)
     {
-        par = vector<vector<int>>(_N + 1, vector<int>(LOG + 1, 0));
-        high = vector<int>(_N + 1, 0);
-        high[0] = -1;
-        adj = temp; N = _N;
-        BIN = vector<int>(20, 1);
-        for(int i = 1; i <= 19; i++) BIN[i] = BIN[i - 1] * 2;
+        n = _n;
+        parent.assign(n + 1, vector<int>(LOG + 1, 0));
+        depth.assign(n + 1, 0);
+        depth[0] = -1;
     }
-    
-    
-    void assignHeight(int u)
+
+    void assignDepth(int u)
     {
-        for(auto i : adj[u])
+        for(auto& v : adj[u])
         {
-            if(i == par[u][0]) continue;
-            par[i][0] = u;
-            high[i] = high[u] + 1;
-            assignHeight(i);
+            if(v == parent[u][0]) continue;
+            parent[v][0] = u;
+            depth[v] = depth[u] + 1;
+            assignDepth(v);
         }
     }
-    
-    
-    void createBinJumping()
+
+    void binLifting()
     {
         for(int j = 1; j <= LOG; j++)
-            for(int i = 1; i <= N; i++) par[i][j] = par[par[i][j - 1]][j - 1];
+            for(int i = 1; i <= n; i++)
+                parent[i][j] = parent[parent[i][j - 1]][j - 1];
     }
-    
-    
-    int solve(int u, int v)
+
+    void process() {assignDepth(1); binLifting();}
+    int query(int u, int v)
     {
-        if(high[u] < high[v]) return solve(v, u);
-        
-        //balance 
-        for(int i = LOG; i >= 0; i--) if(high[par[u][i]] >= high[v]) u = par[u][i];
-        if(u == v) return u;
-        
-        //go up the same time
+        if(depth[u] < depth[v]) return query(v, u);
         for(int i = LOG; i >= 0; i--)
-            if(par[u][i] != par[v][i])
+            if(depth[parent[u][i]] >= depth[v]) u = parent[u][i];
+        
+        if(u == v) return u;
+
+        for(int i = LOG; i >= 0; i--)
+            if(parent[u][i] != parent[v][i])
             {
-                u = par[u][i];
-                v = par[v][i];
+                u = parent[u][i];
+                v = parent[v][i];
             }
-        return par[u][0];
+        return parent[u][0];
     }
 };
