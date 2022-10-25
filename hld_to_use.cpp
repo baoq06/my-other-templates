@@ -54,19 +54,17 @@ struct SegTree
 
 int DFS(int u)
 {
-	sz[u] = 1;
-	int max_child = -1;
-	for(auto v : adj[u])
-	{
-		if(v == parent[u]) continue;
-		depth[v] = depth[u] + 1;
-		parent[v] = u;
-		DFS(v);
-		sz[u] += sz[v];
-		if(max_child == -1 || sz[v] > sz[max_child]) max_child = v;
-	}
-	heavy[u] = max_child;
-	return sz[u];
+    int mx = -1; int sz = 1;
+    for(auto& v : adj[u])
+    {
+        if(v == parent[u]) continue;
+        parent[v] = u;
+        depth[v] = depth[u] + 1;
+        int c = DFS(v);
+        sz += c;
+        if(c > mx) mx = c, heavy[u] = v;
+    }
+    return sz;
 }
 
 int cnt_pos = 0;
