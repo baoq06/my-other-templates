@@ -9,11 +9,11 @@ struct BigInt {
     // Default constructor.
     BigInt() : sign(1) {}
 
-    // Constructor from long long.
-    BigInt(long v) {
+    // Constructor from ll ll.
+    BigInt(ll v) {
         *this = v;
     }
-    BigInt& operator = (long v) {
+    BigInt& operator = (ll v) {
         sign = 1;
         if (v < 0) {
             sign = -1;
@@ -210,7 +210,7 @@ struct BigInt {
     friend pair<BigInt, BigInt> divmod(const BigInt& a1, const BigInt& b1) {
         assert(b1 > 0);  // divmod not well-defined for b < 0.
 
-        long norm = BASE / (b1.a.back() + 1);
+        ll norm = BASE / (b1.a.back() + 1);
         BigInt a = a1.abs() * norm;
         BigInt b = b1.abs() * norm;
         BigInt q = 0, r = 0;
@@ -219,9 +219,9 @@ struct BigInt {
         for (int i = a.a.size() - 1; i >= 0; i--) {
             r *= BASE;
             r += a.a[i];
-            long s1 = r.a.size() <= b.a.size() ? 0 : r.a[b.a.size()];
-            long s2 = r.a.size() <= b.a.size() - 1 ? 0 : r.a[b.a.size() - 1];
-            long d = ((long) BASE * s1 + s2) / b.a.back();
+            ll s1 = r.a.size() <= b.a.size() ? 0 : r.a[b.a.size()];
+            ll s2 = r.a.size() <= b.a.size() - 1 ? 0 : r.a[b.a.size() - 1];
+            ll d = ((ll) BASE * s1 + s2) / b.a.back();
             r -= b * d;
             while (r < 0) {
                 r += b, --d;
@@ -255,7 +255,7 @@ struct BigInt {
         if (v < 0)
             sign = -sign, v = -v;
         for (int i = (int) a.size() - 1, rem = 0; i >= 0; --i) {
-            long cur = a[i] + rem * (long) BASE;
+            ll cur = a[i] + rem * (ll) BASE;
             a[i] = (int) (cur / v);
             rem = (int) (cur % v);
         }
@@ -276,12 +276,12 @@ struct BigInt {
         *this = *this / v;
     }
 
-    long operator%(long v) const {
+    ll operator%(ll v) const {
         assert(v > 0);  // operator / not well-defined for v <= 0.
         assert(v < BASE);
         int m = 0;
         for (int i = a.size() - 1; i >= 0; --i)
-            m = (a[i] + m * (long) BASE) % v;
+            m = (a[i] + m * (ll) BASE) % v;
         return m * sign;
     }
 
@@ -295,7 +295,7 @@ struct BigInt {
         for (int i = 0, carry = 0; i < (int) a.size() || carry; ++i) {
             if (i == (int) a.size())
                 a.push_back(0);
-            long cur = a[i] * (long) v + carry;
+            ll cur = a[i] * (ll) v + carry;
             carry = (int) (cur / BASE);
             a[i] = (int) (cur % BASE);
             //asm("divl %%ecx" : "=a"(carry), "=d"(a[i]) : "A"(cur), "c"(base));
@@ -327,18 +327,18 @@ struct BigInt {
 
     // Convert BASE 10^old --> 10^new.
     static vector<int> convert_base(const vector<int> &a, int old_digits, int new_digits) {
-        vector<long> p(max(old_digits, new_digits) + 1);
+        vector<ll> p(max(old_digits, new_digits) + 1);
         p[0] = 1;
         for (int i = 1; i < (int) p.size(); i++)
             p[i] = p[i - 1] * 10;
         vector<int> res;
-        long cur = 0;
+        ll cur = 0;
         int cur_digits = 0;
         for (int i = 0; i < (int) a.size(); i++) {
             cur += a[i] * p[cur_digits];
             cur_digits += old_digits;
             while (cur_digits >= new_digits) {
-                res.push_back((long)(cur % p[new_digits]));
+                res.push_back((ll)(cur % p[new_digits]));
                 cur /= p[new_digits];
                 cur_digits -= new_digits;
             }
@@ -397,9 +397,9 @@ struct BigInt {
         fft(fa, true);
 
         res.resize(n);
-        long carry = 0;
+        ll carry = 0;
         for (int i = 0; i < n; ++i) {
-            long t = (long) (fa[i].real() + 0.5) + carry;
+            ll t = (ll) (fa[i].real() + 0.5) + carry;
             carry = t / 1000;
             res[i] = t % 1000;
         }
@@ -412,7 +412,7 @@ struct BigInt {
         for (int i = 0; i < (int) a.size(); ++i)
             if (a[i])
                 for (int j = 0, carry = 0; j < (int) v.a.size() || carry; ++j) {
-                    long cur = res.a[i + j] + (long) a[i] * (j < (int) v.a.size() ? v.a[j] : 0) + carry;
+                    ll cur = res.a[i + j] + (ll) a[i] * (j < (int) v.a.size() ? v.a[j] : 0) + carry;
                     carry = (int) (cur / BASE);
                     res.a[i + j] = (int) (cur % BASE);
                 }
@@ -420,7 +420,7 @@ struct BigInt {
         return res;
     }
 
-    typedef vector<long> vll;
+    typedef vector<ll> vll;
 
     static vll karatsubaMultiply(const vll &a, const vll &b) {
         int n = a.size();
@@ -475,9 +475,9 @@ struct BigInt {
         vll c = karatsubaMultiply(x, y);
         BigInt res;
         res.sign = sign * v.sign;
-        long carry = 0;
+        ll carry = 0;
         for (int i = 0; i < (int) c.size(); i++) {
-            long cur = c[i] + carry;
+            ll cur = c[i] + carry;
             res.a.push_back((int) (cur % 1000000));
             carry = cur / 1000000;
         }
@@ -542,14 +542,14 @@ struct BigInt {
         while (a.a.empty() || a.a.size() % 2 == 1)
             a.a.push_back(0);
 
-        BigInt r = (long) a.a[n - 1] * BASE + a.a[n - 2];
+        BigInt r = (ll) a.a[n - 1] * BASE + a.a[n - 2];
         firstDigit = (int) sqrt((double) a.a[n - 1] * BASE + a.a[n - 2]);
         int q = firstDigit;
         BigInt res;
 
         for(int j = n / 2 - 1; j >= 0; j--) {
             for(; ; --q) {
-                BigInt r1 = (r - (res * 2 * BigInt(BASE) + q) * q) * BigInt(BASE) * BigInt(BASE) + (j > 0 ? (long) a.a[2 * j - 1] * BASE + a.a[2 * j - 2] : 0);
+                BigInt r1 = (r - (res * 2 * BigInt(BASE) + q) * q) * BigInt(BASE) * BigInt(BASE) + (j > 0 ? (ll) a.a[2 * j - 1] * BASE + a.a[2 * j - 2] : 0);
                 if (r1 >= 0) {
                     r = r1;
                     break;
@@ -562,7 +562,7 @@ struct BigInt {
                 int d1 = res.a.size() + 2 < r.a.size() ? r.a[res.a.size() + 2] : 0;
                 int d2 = res.a.size() + 1 < r.a.size() ? r.a[res.a.size() + 1] : 0;
                 int d3 = res.a.size() < r.a.size() ? r.a[res.a.size()] : 0;
-                q = ((long) d1 * BASE * BASE + (long) d2 * BASE + d3) / (firstDigit * 2);
+                q = ((ll) d1 * BASE * BASE + (ll) d2 * BASE + d3) / (firstDigit * 2);
             }
         }
 
