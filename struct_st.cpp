@@ -1,52 +1,56 @@
-struct ST
-{   
-    vector<int> st; 
-    segTree(int N) {st = vector<int>(N * 4 + 1, 0);}
-    
-    vector<int> a;
-    void readArray(int N)
-    {
-        a = vector<int>(N + 1);
-        for(int i = 1; i <= N; i++) cin >> a[i];
+struct segment_tree {
+    vector<int> st;
+    int n;
+
+    segment_tree(int _n = 0) {
+        n = _n;
+        st.assign(n * 4 + 1, 0);
     }
-    
-    void buildTree(int id, int l, int r)
-    {
-        if(l == r)
-        {
+
+    void build(int id, int l, int r) {
+        if(l == r) {
             st[id] = a[l];
             return;
         }
-        
+
         int mid = (l + r) >> 1;
-        buildTree(id * 2, l, mid);
-        buildTree(id * 2 + 1, mid + 1, r);
-        
-        st[id] = st[id * 2] + st[id * 2 + 1];
+        build(id * 2, l, mid);
+        build(id * 2 + 1, mid + 1, r);
+
+        st[id] = max(st[id * 2], st[id * 2 + 1]);
     }
-    
-    void update(int id, int l, int r, int i, int v)
-    {
-        if(i < l || i > r) return;
-        if(l == r)
-        {
-            st[id] = v;
+    void build() {
+        build(1, 1, n);
+    }
+
+    void update(int id, int l, int r, const int& pos, const int& value) {
+        if(l > pos || r < pos) return;
+        if(l == r) {
+            st[id] = value;
             return;
         }
-        
+
         int mid = (l + r) >> 1;
-        update(id * 2, l, mid, i, v);
-        update(id * 2 + 1, mid + 1, r, i, v);
-        
-        st[id] = st[id * 2] + st[id * 2 + 1];
+        update(id * 2, l, mid, pos, value);
+        update(id * 2 + 1, mid + 1, r, pos, value);
+
+        st[id] = max(st[id * 2], st[id * 2 + 1]);
     }
-    
-    int getSum(int id, int l, int r, int x, int y)
-    {
-        if(l > y || r < x) return 0;
+    void update(const int& pos, const int& value) {
+        update(1, 1, n, pos, value);
+    }
+
+    int get(int id, int l, int r, const int& x, const int& y) {
+        if(l > y || r < x) return INT_MIN;
         if(l >= x && r <= y) return st[id];
-        
+
         int mid = (l + r) >> 1;
-        return getSum(id * 2, l, mid, x, y) + getSum(id * 2 + 1, mid + 1, r , x, y);
+        int retLeft = get(id * 2, l, mid, x, y);
+        int retRight = get(id * 2 + 1, mid + 1, r, x, y);
+        
+        return max(retLeft, retRight);
+    }
+    int get(const int& x, const int& y) {
+        return get(1, 1, n, x, y);
     }
 };
