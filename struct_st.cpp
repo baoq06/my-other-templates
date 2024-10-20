@@ -1,3 +1,6 @@
+const int N = 1e5 + 10;
+int a[N];
+
 struct segment_tree {
     vector<int> st;
     int n;
