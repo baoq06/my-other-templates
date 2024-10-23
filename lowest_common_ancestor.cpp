@@ -1,12 +1,19 @@
+const int N = 2e5 + 10, LOG = 20;
+
 struct lowest_common_ancestor {
     int n;
     vector<int> dep;
-    vector<vector<int>> par;
+    vector<vector<int>> par, adj;
 
     lowest_common_ancestor(int _n = 0) {
         n = _n;
         dep.assign(n + 1, 1); dep[0] = 0;
         par.assign(n + 1, vector<int>(LOG + 1, 0));
+        adj.assign(n + 1, vector<int>());
+    }
+
+    void add_edge(int x, int y) {
+        adj[x].push_back(y);
     }
 
     void assign_depth(int cur) {
