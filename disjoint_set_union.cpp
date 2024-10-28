@@ -8,7 +8,7 @@ struct disjoint_set_union {
     }
 
     int get(int cur) {
-        return e[cur] < 0 ? e[cur] : e[cur] = get(e[cur]);
+        return e[cur] < 0 ? cur : e[cur] = get(e[cur]);
     }
 
     bool connected(int x, int y) {
