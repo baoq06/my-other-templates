@@ -22,9 +22,9 @@ struct disjoint_set_union {
     bool unite(int x, int y) {
         x = get(x);
         y = get(y);
-        if(x == y) return 0;
+        if(x == y) return false;
         if(e[x] > e[y]) swap(x, y);
         e[x] += e[y]; e[y] = x;
-        return 1;
+        return true;
     }
 };
